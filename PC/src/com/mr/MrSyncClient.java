@@ -17,8 +17,10 @@ public class MrSyncClient extends Thread {
 	
 	public void client(){
 		try {
+			Runtime.getRuntime().exec("adb shell am broadcast -a MrPcSync.NotifyServiceStart");
+			Thread.sleep(1000);
 			Runtime.getRuntime().exec("adb forward tcp:2589 tcp:2589");
-			//Thread.sleep(2000);
+			Thread.sleep(1000);
 			
 			mSocket = new Socket(mAddress, mPort);
 			out = new BufferedOutputStream(mSocket.getOutputStream());
@@ -46,13 +48,6 @@ public class MrSyncClient extends Thread {
 		try {
 			if (mSocket==null){
 				return;
-			}
-			if (mSocket.isConnected()){
-				int err = 0;
-				while (-1!=(err= in.read(buffer, 0, buffer.length))){
-					System.out.println(mHead.getHead(buffer));
-					System.out.println(mHead.getMsg(buffer));
-				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

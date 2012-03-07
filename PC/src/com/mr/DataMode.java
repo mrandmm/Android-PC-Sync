@@ -26,6 +26,8 @@ public class DataMode implements ActionListener, ListSelectionListener,
 	private ScreenShot screen_shot = ScreenShot.getInstance();
 	private DeviceInfo mDeviceInfo = DeviceInfo.getInstance();
 	private Contact mContact = Contact.getInstance();
+	
+	private MrSyncClient mClient = new MrSyncClient();
 
 	//
 	JTabbedPane tabbedPane;
@@ -93,6 +95,9 @@ public class DataMode implements ActionListener, ListSelectionListener,
 				.setText(mDeviceInfo.getDeviceInfo());
 
 		mContact.setDevice(mDevicesList.getDevices()[selection]);
+		
+		mClient.start();
+		mClient.client();
 	}
 
 	@Override
@@ -100,7 +105,6 @@ public class DataMode implements ActionListener, ListSelectionListener,
 		if (tabbedPane.getSelectedIndex() == 0) {
 
 		} else if (tabbedPane.getSelectedIndex() == 1) {
-			mContact.getContact();
 		} else if (tabbedPane.getSelectedIndex() == 2) {
 
 		} else if (tabbedPane.getSelectedIndex() == 3) {
