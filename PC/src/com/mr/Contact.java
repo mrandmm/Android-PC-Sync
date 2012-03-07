@@ -2,6 +2,8 @@ package com.mr;
 
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.SyncService;
+import com.mrpcsync.pc.data.MrPcSyncHead;
+import com.mrpcsync.pc.data.MrSyncClient;
 
 public class Contact {
 	private static Contact _instance = null;
@@ -25,6 +27,6 @@ public class Contact {
 	public void addContact(String name, String phone){
 		mHead.setHead(MrPcCMD.NEW_ADD_CONTACT);
 		mHead.setMsg(name+"#"+phone);
-		mClient.send(mHead.getBuffer());
+		//mClient.send(mHead.getBuffer());
 	}
 }

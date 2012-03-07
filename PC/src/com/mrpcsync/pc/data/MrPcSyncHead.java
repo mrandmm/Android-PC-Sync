@@ -1,17 +1,21 @@
-package com.mr;
+package com.mrpcsync.pc.data;
+
+import com.mrpcsync.pc.event.ObjectEvent;
 
 
+public class MrPcSyncHead extends ObjectEvent<MrPcSyncHead>{
+	
+	public MrPcSyncHead(){
+		super(RECV_SOCKET);
+		mOut = new byte[length];
+	}
 
-public class MrPcSyncHead {
-    private byte[] mIn;
+	private byte[] mIn;
     private byte[] mOut;
     private final static int headLength = 20;
     private final static int cmdLength = 1024;
     private final static int length = headLength+cmdLength;
 
-    public MrPcSyncHead() {
-        mOut = new byte[length];
-    }
 
     public void setReadBuffer(byte[] buffer) {
         this.mIn = buffer;

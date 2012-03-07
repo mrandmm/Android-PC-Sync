@@ -1,4 +1,4 @@
-package com.mr;
+package com.mrpcsync.pc.data.control;
 
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package com.mr;
+package com.mrpcsync.pc.ui;
 
 import java.awt.EventQueue;
 
@@ -23,11 +23,16 @@ import java.awt.event.MouseEvent;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 
+import com.mr.ScreenDialog;
+import com.mr.ScreenShot;
+import com.mrpcsync.pc.data.control.Controller;
+import com.mrpcsync.pc.ui.control.DataModeEventDispatcher;
+
 public class MrPcSync {
 
 	private JFrame frame;
 	private Controller controller = Controller.getInstance();
-	private DataMode datamode = DataMode.getInstance();
+	private DataModeEventDispatcher datamode = DataModeEventDispatcher.getInstance();
 
 	/**
 	 * Launch the application.
@@ -62,12 +67,12 @@ public class MrPcSync {
 		frame.setBounds(100, 100, 800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		ScreenDialog.getInstance(frame);
+		//ScreenDialog.getInstance(frame);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(0, 0, 800, 600);
 		frame.getContentPane().add(tabbedPane);
-		controller.addController("tabbedPane", tabbedPane);
+		//controller.addController("tabbedPane", tabbedPane);
 		
 		JPanel panel_welcome = new JPanel();
 		tabbedPane.addTab("\u6B22\u8FCE", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_about.png"), panel_welcome, null);
@@ -75,14 +80,14 @@ public class MrPcSync {
 		
 		JPanel panel_devices = new JPanel();
 		panel_devices.setBackground(Color.WHITE);
-		panel_devices.setBounds(325, 40, 192, 336);
+		panel_devices.setBounds(75, 40, 192, 336);
 		panel_welcome.add(panel_devices);
 		panel_devices.setLayout(null);
 		
 		JList list_devices = new JList();
 		list_devices.setBounds(0, 25, 192, 311);
 		panel_devices.add(list_devices);
-		controller.addController("list_devices", list_devices);
+		//controller.addController("list_devices", list_devices);
 		
 		JToolBar toolBar = new JToolBar();
 		toolBar.setToolTipText("");
@@ -92,21 +97,11 @@ public class MrPcSync {
 		JButton btn_refresh = new JButton("\u5237\u65B0\u8BBE\u5907\u5217\u8868");
 		btn_refresh.setHorizontalAlignment(SwingConstants.RIGHT);
 		toolBar.add(btn_refresh);
-		controller.addController("btn_refresh", btn_refresh);
-		
-		JButton btn_screenshot = new JButton("\u622A\u56FE");
-		btn_screenshot.setBounds(62, 368, 93, 23);
-		panel_welcome.add(btn_screenshot);
-		controller.addController("btn_screenshot", btn_screenshot);
-		
-		JButton btn_refresh_screen = new JButton("\u5237\u65B0");
-		btn_refresh_screen.setBounds(161, 368, 93, 23);
-		panel_welcome.add(btn_refresh_screen);
-		controller.addController("btn_refresh_screen", btn_refresh_screen);
+		//controller.addController("btn_refresh", btn_refresh);
 		
 		JPanel panel_devices_info = new JPanel();
 		panel_devices_info.setBackground(Color.WHITE);
-		panel_devices_info.setBounds(580, 40, 192, 336);
+		panel_devices_info.setBounds(345, 40, 192, 336);
 		panel_welcome.add(panel_devices_info);
 		panel_devices_info.setLayout(null);
 		
@@ -120,17 +115,12 @@ public class MrPcSync {
 		JTextPane text_device_info = new JTextPane();
 		text_device_info.setBounds(10, 28, 172, 298);
 		panel_devices_info.add(text_device_info);
-		controller.addController("text_device_info", text_device_info);
-		
-		ScreenShot panel_phone = new ScreenShot();
-		panel_phone.setBackground(Color.BLACK);
-		panel_phone.setBounds(51, 40, 213, 320);
-		panel_welcome.add(panel_phone);
+		//controller.addController("text_device_info", text_device_info);
 		
 		JPanel panel_contact = new JPanel();
 		tabbedPane.addTab("\u901A\u8BAF\u5F55", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_account.png"), panel_contact, null);
 		panel_contact.setLayout(null);
-		controller.addController("panel_contact", panel_contact);
+		//controller.addController("panel_contact", panel_contact);
 		
 		JTabbedPane tabbedPane_1 = new JTabbedPane(JTabbedPane.LEFT);
 		tabbedPane_1.setBounds(21, 24, 753, 452);
@@ -153,13 +143,13 @@ public class MrPcSync {
 		textField.setBounds(95, 51, 97, 21);
 		panel.add(textField);
 		textField.setColumns(10);
-		controller.addController("textField", textField);
+		//controller.addController("textField", textField);
 		
 		JTextField textField_1 = new JTextField();
 		textField_1.setBounds(95, 87, 97, 21);
 		panel.add(textField_1);
 		textField_1.setColumns(10);
-		controller.addController("textField_1", textField_1);
+		//controller.addController("textField_1", textField_1);
 		
 		JLabel label = new JLabel("\u624B\u673A");
 		label.setBounds(61, 90, 54, 15);
@@ -168,7 +158,7 @@ public class MrPcSync {
 		JButton btn_new_contact = new JButton("\u6DFB\u52A0");
 		btn_new_contact.setBounds(95, 151, 93, 23);
 		panel.add(btn_new_contact);
-		controller.addController("btn_new_contact", btn_new_contact);
+		//controller.addController("btn_new_contact", btn_new_contact);
 		
 		JPanel panel_all_contact = new JPanel();
 		tabbedPane_1.addTab("\u6240\u6709\u8054\u7CFB\u4EBA", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\umeng_analyse_see_list_pressed.png"), panel_all_contact, null);
@@ -187,7 +177,7 @@ public class MrPcSync {
 		tabbedPane.addTab("\u77ED\u4FE1", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_feedback.png"), panel_message, null);
 		panel_message.setLayout(null);
 		panel_message.setEnabled(false);
-		controller.addController("panel_message", panel_message);
+		//controller.addController("panel_message", panel_message);
 		
 		JTabbedPane tabbedPane_2 = new JTabbedPane(JTabbedPane.LEFT);
 		tabbedPane_2.setBounds(21, 24, 753, 452);
@@ -207,7 +197,7 @@ public class MrPcSync {
 		tabbedPane.addTab("\u5E94\u7528", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_task.png"), panel_application, null);
 		panel_application.setLayout(null);
 		panel_application.setEnabled(false);
-		controller.addController("panel_application", panel_application);
+		//controller.addController("panel_application", panel_application);
 		
 		JTabbedPane tabbedPane_3 = new JTabbedPane(JTabbedPane.LEFT);
 		tabbedPane_3.setBounds(21, 24, 753, 452);
@@ -221,6 +211,6 @@ public class MrPcSync {
 	}
 	
 	private void initializeData() {
-		datamode.initWelcomePanel();
+		//datamode.initWelcomePanel();
 	}
 }

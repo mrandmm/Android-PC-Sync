@@ -4,6 +4,7 @@ import javax.swing.JList;
 
 import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
+import com.mrpcsync.pc.data.control.Controller;
 
 public class DevicesList implements Runnable{
 	private static DevicesList _instance = null;
