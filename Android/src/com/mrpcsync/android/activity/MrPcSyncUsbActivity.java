@@ -28,6 +28,8 @@ public class  MrPcSyncUsbActivity extends Activity {
         IntentFilter filter =  new IntentFilter();
         mReceiver = new CmdBroadcastReceiver();
         filter.addAction(MrPcSyncAction.NEW_ADD_CONTACT);
+        filter.addAction(MrPcSyncAction.NEW_ADD_MESSAGE);
+        filter.addAction(MrPcSyncAction.CLOSE);
         this.registerReceiver(mReceiver, filter);
     }
 
@@ -47,6 +49,8 @@ public class  MrPcSyncUsbActivity extends Activity {
                 mContact.setName(intent.getStringExtra("name"));
                 mContact.setPhone(intent.getStringExtra("phone"));
                 mContacts.insertContact(mContact);
+            }else if(MrPcSyncAction.CLOSE.endsWith(action)){
+                finish();
             }
         }
         

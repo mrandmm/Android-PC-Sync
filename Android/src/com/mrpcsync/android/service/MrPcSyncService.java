@@ -3,10 +3,8 @@ package com.mrpcsync.android.service;
 import com.mrpcsync.android.activity.MrPcSyncUsbActivity;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 public class MrPcSyncService extends Service{
     @Override
