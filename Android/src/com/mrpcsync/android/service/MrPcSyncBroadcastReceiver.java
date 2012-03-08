@@ -1,4 +1,5 @@
-package com.mr;
+package com.mrpcsync.android.service;
+
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

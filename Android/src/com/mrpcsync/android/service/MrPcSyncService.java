@@ -1,4 +1,6 @@
-package com.mr;
+package com.mrpcsync.android.service;
+
+import com.mrpcsync.android.activity.MrPcSyncUsbActivity;
 
 import android.app.Service;
 import android.content.Context;

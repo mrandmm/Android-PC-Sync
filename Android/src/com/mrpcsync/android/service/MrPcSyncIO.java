@@ -1,9 +1,12 @@
-package com.mr;
+package com.mrpcsync.android.service;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.net.Socket;
+
+import com.mrpcsync.android.data.MrPcSyncAction;
+import com.mrpcsync.android.data.MrPcSyncHead;
 
 import android.content.Context;
 import android.content.Intent;

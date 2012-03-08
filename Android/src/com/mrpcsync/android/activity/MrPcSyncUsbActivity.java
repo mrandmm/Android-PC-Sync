@@ -1,4 +1,7 @@
-package com.mr;
+package com.mrpcsync.android.activity;
+
+import com.mrpcsync.android.data.MrPcSyncAction;
+import com.mrpcsync.android.data.MrPcSyncContact;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

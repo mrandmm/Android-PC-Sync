@@ -1,4 +1,4 @@
-package com.mr;
+package com.mrpcsync.android.data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +113,7 @@ public class MrPcSyncContact {
         }
     }
 
-    static class Contact {
+    public static class Contact {
         private String id;
         private String name;
         private String phone;

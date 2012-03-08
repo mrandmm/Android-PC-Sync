@@ -1,4 +1,4 @@
-package com.mr;
+package com.mrpcsync.android.data;
 
 public class MrPcSyncAction {
     public static String NEW_ADD_CONTACT = "MrPcSync.ACTION.NEW_ADD_CONTACT";

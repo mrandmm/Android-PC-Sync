@@ -1,7 +1,8 @@
-package com.mr;
+package com.mrpcsync.android.service;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+
 
 import android.content.Context;
 import android.util.Log;
