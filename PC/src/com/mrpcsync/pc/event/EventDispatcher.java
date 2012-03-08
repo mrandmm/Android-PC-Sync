@@ -6,18 +6,18 @@ import java.util.List;
 
 public class EventDispatcher implements IEventDispatcher{
 	private static ObjectEvent<?> evt;
-    private static List<HashMap<String, OnSocketListener>> onList = new ArrayList<HashMap<String, OnSocketListener>>();
+    private static List<HashMap<String, OnRecvListener>> onList = new ArrayList<HashMap<String, OnRecvListener>>();
     
 	@Override
-	public void addEventListener(String type, OnSocketListener listener) {
-		HashMap<String, OnSocketListener> map = new HashMap<String, OnSocketListener>();
+	public void addEventListener(String type, OnRecvListener listener) {
+		HashMap<String, OnRecvListener> map = new HashMap<String, OnRecvListener>();
         map.put(type, listener);
         onList.add(map);
 	}
 
 	@Override
-	public void removeListener(String type, OnSocketListener listener) {
-		HashMap<String, OnSocketListener> map = new HashMap<String, OnSocketListener>();
+	public void removeListener(String type, OnRecvListener listener) {
+		HashMap<String, OnRecvListener> map = new HashMap<String, OnRecvListener>();
         map.put(type, listener);
         onList.remove(map);
 	}
