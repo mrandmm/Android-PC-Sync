@@ -24,5 +24,4 @@ public class Controller {
 	public Object getController(String key){
 		return mController.get(key);
 	}
-
 }
