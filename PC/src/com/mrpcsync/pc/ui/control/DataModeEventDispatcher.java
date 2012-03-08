@@ -17,6 +17,7 @@ import com.mrpcsync.pc.data.control.Controller;
 import com.mrpcsync.pc.event.EventDispatcher;
 import com.mrpcsync.pc.event.ObjectEvent;
 import com.mrpcsync.pc.event.OnRecvListener;
+import com.pcsync.pc.handle.MrPcSyncContact;
 
 public class DataModeEventDispatcher extends EventDispatcher implements
         OnRecvListener {
@@ -24,6 +25,7 @@ public class DataModeEventDispatcher extends EventDispatcher implements
     private static DataModeEventDispatcher _instance = null;
     private MrSyncClient mClient = MrSyncClient.getInstance();
     private Controller mController = Controller.getInstance();
+    private MrPcSyncContact mContact = MrPcSyncContact.getInstance();
 
     private JTabbedPane mTabbedPane;
     private AndroidDeviceList mAndroidDeviceList = AndroidDeviceList.getInstance();
@@ -69,15 +71,14 @@ public class DataModeEventDispatcher extends EventDispatcher implements
 
     @Override
     public void onRecv(ObjectEvent<?> event) {
-        if (event.getEvent()==ObjectEvent.RECV_SOCKET){
+        if (ObjectEvent.RECV_SOCKET.equals(event.getEvent())){
             onRecv(((MrPcSyncHead) event));
-        }else if(event.getEvent()==ObjectEvent.RECV_DEVICE){
+        }else if(ObjectEvent.RECV_DEVICE.equals(event.getEvent())){
             onRecv(((AndroidDevice) event));
         }
     }
     
     public void onRecv(AndroidDevice device) {
-        AndroidInstall.getInstance().setDevices(device.getDevices()[0]);
     }
 
     public void onRecv(MrPcSyncHead head) {

@@ -10,7 +10,13 @@ public class AndroidDevice extends ObjectEvent<AndroidDevice>{
         super(RECV_DEVICE);
     }
     
-    public void setDevices(IDevice[] device){
+    public AndroidDevice(IDevice[] devices) {
+    	super(RECV_DEVICE);
+    	setDevices(devices);
+	}
+
+	public void setDevices(IDevice[] device){
+		
         mDevices = device;
     }
     

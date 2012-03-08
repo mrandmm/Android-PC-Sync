@@ -37,9 +37,7 @@ public class AndroidDeviceList extends EventDispatcher implements Runnable {
                 break;
             }
         }
-        AndroidDevice devices = new AndroidDevice();
-        devices.setDevices(mBridge.getDevices());
-        this.dispatchEvent(devices);
+        this.dispatchEvent(new AndroidDevice(mBridge.getDevices()));
         AndroidDebugBridge.disconnectBridge();
     }
 
