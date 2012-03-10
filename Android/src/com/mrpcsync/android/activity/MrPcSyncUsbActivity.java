@@ -1,7 +1,6 @@
 package com.mrpcsync.android.activity;
 
 import com.mrpcsync.android.data.MrPcSyncAction;
-import com.mrpcsync.android.data.MrPcSyncContact;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -13,8 +12,8 @@ import android.util.Log;
 
 public class  MrPcSyncUsbActivity extends Activity {
     
-    private MrPcSyncContact mContacts;
-    private MrPcSyncContact.Contact mContact;
+    //private MrPcSyncContact mContacts;
+   // private MrPcSyncContact.Contact mContact;
     
     private CmdBroadcastReceiver mReceiver;
     @Override
@@ -22,8 +21,8 @@ public class  MrPcSyncUsbActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.usb_sync);
         
-        mContacts = MrPcSyncContact.Instance(this);
-        mContact = new MrPcSyncContact.Contact();
+        //mContacts = MrPcSyncContact.Instance(this);
+        //mContact = new MrPcSyncContact.Contact();
     
         IntentFilter filter =  new IntentFilter();
         mReceiver = new CmdBroadcastReceiver();
@@ -46,9 +45,9 @@ public class  MrPcSyncUsbActivity extends Activity {
             String action = intent.getAction();
             Log.v("MOURUI", action);
             if (MrPcSyncAction.NEW_ADD_CONTACT.equals(action)){
-                mContact.setName(intent.getStringExtra("name"));
-                mContact.setPhone(intent.getStringExtra("phone"));
-                mContacts.insertContact(mContact);
+                //mContact.setName(intent.getStringExtra("name"));
+                //mContact.setPhone(intent.getStringExtra("phone"));
+                //mContacts.insertContact(mContact);
             }else if(MrPcSyncAction.CLOSE.endsWith(action)){
                 finish();
             }
