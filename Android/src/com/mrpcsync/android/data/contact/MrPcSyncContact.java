@@ -1,38 +1,23 @@
 package com.mrpcsync.android.data.contact;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import android.content.ContentProviderOperation;
-import android.content.ContentProviderOperation.Builder;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
-import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
-import android.util.Log;
 
 public class MrPcSyncContact {
 	private static MrPcSyncContact _instance = null;
 	private ContentResolver mResolver;
-	private String[] CONTACTS_PROJECT = { Contacts._ID, Contacts.DISPLAY_NAME};
-	private String[] CONTACTS_PHONE = { Phone.NUMBER, Phone.TYPE, Phone.LABEL };
-	private String[] CONTACTS_DISPLAYNAME = { StructuredName.DISPLAY_NAME };
-	private String[] CONTACTS_EMAIL = { Email.DATA1, Email.TYPE, Email.LABEL };
-	
-	private ArrayList<String[]> displayNameList = new ArrayList<String[]>();
-	private ArrayList<String[]> phoneList = new ArrayList<String[]>();
-	private ArrayList<String[]> emailList = new ArrayList<String[]>();
-	
-	private ArrayList<String[]> contactList= new ArrayList<String[]>();
+	private Uri mUri;
+	private ContentValues mValues;
+	private static long mId;
 
 	private MrPcSyncContact(Context context) {
 		mResolver = context.getContentResolver();
@@ -44,141 +29,95 @@ public class MrPcSyncContact {
 		}
 		return _instance;
 	}
-	
-	public void getContacts(String contactId){
-		Cursor cursor = null;
-		try{
-			cursor = mResolver.query(Data.CONTENT_URI, null, Data.CONTACT_ID+"=?", new String[]{contactId}, null);
-			
-			String mimeType = null;
-			String[] contentValue = null;
-			
-			while (cursor.moveToNext()){
-				mimeType = cursor.getString(cursor.getColumnIndex(Data.MIMETYPE));
-				if (StructuredName.CONTENT_ITEM_TYPE.equals(mimeType)){
-					contentValue = getStringInContactCursor(CONTACTS_DISPLAYNAME, cursor);
-					displayNameList.add(contentValue);
-				}else if(Phone.CONTENT_ITEM_TYPE.equals(mimeType)){
-					contentValue = getStringInContactCursor(CONTACTS_PHONE, cursor);
-					phoneList.add(contentValue);
-				}else if(Email.CONTENT_TYPE.equals(mimeType)){
-					contentValue = getStringInContactCursor(CONTACTS_EMAIL, cursor);
-					emailList.add(contentValue);
-				}
-			}
-		}catch (Exception e) {
-		}finally {
-			if (cursor != null) {
-				cursor.close();
-			}
+
+	private void nextInsert() {
+		mValues = new ContentValues();
+		mUri = mResolver.insert(RawContacts.CONTENT_URI, mValues);
+		mId = ContentUris.parseId(mUri);
+	}
+
+	public void deleteContact(long contactid) {
+		mResolver.delete(
+				ContentUris.withAppendedId(RawContacts.CONTENT_URI, contactid),
+				null, null);
+	}
+
+	public void insertContact(Contact contact) {
+		nextInsert();
+
+		if (contact.getName() != null) {
+			mValues.clear();
+			mValues.put(Data.RAW_CONTACT_ID, mId);
+			mValues.put(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE);
+			mValues.put(StructuredName.GIVEN_NAME, contact.getName());
+			mResolver.insert(ContactsContract.Data.CONTENT_URI, mValues);
 		}
-	}
-	
-	public void deleteContact(long contactid){
-        mResolver.delete(ContentUris.withAppendedId(RawContacts.CONTENT_URI, contactid), null, null);
-	}
-	
-	public void deleteContact(String name){
-		String contactid;
-		for (int i=0; i<contactList.size(); i++){
-			String[] item = contactList.get(i);
-			if (item[1].equals(name)){
-				contactid = item[0];
-				mResolver.delete(ContentUris.withAppendedId(RawContacts.CONTENT_URI, Long.getLong(contactid)), null, null);
-			}
+
+		if (contact.getPhone() != null) {
+			mValues.clear();
+			mValues.put(Data.RAW_CONTACT_ID, mId);
+			mValues.put(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
+			mValues.put(Phone.NUMBER, contact.getPhone());
+			mValues.put(Phone.TYPE, Phone.TYPE_MOBILE);
+			mResolver.insert(ContactsContract.Data.CONTENT_URI, mValues);
+		}
+
+		if (contact.getEmail() != null) {
+			mValues.clear();
+			mValues.put(Data.RAW_CONTACT_ID, mId);
+			mValues.put(Data.MIMETYPE, Email.CONTENT_ITEM_TYPE);
+			mValues.put(Email.DATA, contact.getEmail());
+			mValues.put(Email.TYPE, Email.TYPE_HOME);
+			mResolver.insert(ContactsContract.Data.CONTENT_URI, mValues);
 		}
 	}
 
-	public ArrayList<String[]> getContacts() {
-		Cursor cursor = null;
-		try {
-			cursor = mResolver.query(ContactsContract.Contacts.CONTENT_URI, CONTACTS_PROJECT, Contacts.IN_VISIBLE_GROUP + "=1", null, null);
-			int[] indexs = getColumnIndexs(CONTACTS_PROJECT, cursor);
+	public static class Contact {
+		private String id;
+		private String name;
+		private String phone;
+		private String email;
 
-			while (cursor.moveToNext()) {
-				String[] item = new String[CONTACTS_PROJECT.length];
-				for (int i=0; i<CONTACTS_PROJECT.length; i++){
-					item[i] = cursor.getString(indexs[i]);
-				}
-				contactList.add(item);
-			}
-		} catch (Exception e) {
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
+		public Contact() {
 		}
-		return contactList;
-	}
-	
-	public void insertContacts(String displayName, ArrayList<String[]> phone, ArrayList<String[]> email){
-		ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-		long contactId = insertRawContacts();
-		String id = Long.toString(contactId);
-		if (displayName!=null){
-			insertContactDisplayname(ops, StructuredName.CONTENT_ITEM_TYPE, id, displayName);
-		}
-		
-		if (phone!=null){
-			for (int i=0; i<phone.size(); i++){
-				String[] item = phone.get(i);
-				insertItemContacts(ops, Phone.CONTENT_ITEM_TYPE, id, CONTACTS_PHONE, item);
-			}
-		}
-		if (email!=null){
-			for (int i=0; i<phone.size(); i++){
-				String[] item = phone.get(i);
-				insertItemContacts(ops, Phone.CONTENT_ITEM_TYPE, id, CONTACTS_PHONE, item);
-			}
-		}
-	}
-	
-	private String[] getStringInContactCursor(String[] contacts, Cursor cur){
-		String[] err = new String[contacts.length];
-		for (int i=0; i<err.length; i++){
-			String value = cur.getString(cur.getColumnIndex(contacts[i]));
-			if (value==null){
-				err[i] = "";
-			}else{
-				err[i] = value;
-			}
-		}
-		return err;
-	}
-	
-	private long insertRawContacts(){
-		ContentValues values = new ContentValues();
-		values.put(RawContacts.ACCOUNT_NAME, "");
-		values.put(RawContacts.CONTENT_TYPE, "");
-		Uri uri = mResolver.insert(RawContacts.CONTENT_URI, values);
-		return ContentUris.parseId(uri);
-	}
-	
-	private void insertContactDisplayname(ArrayList<ContentProviderOperation> ops, String type, String id, String displayName){
-		Builder builder = ContentProviderOperation.newInsert(Data.CONTENT_URI);
-		builder.withYieldAllowed(true);
-		builder.withValue(Data.MIMETYPE, type);
-		builder.withValue(Data.RAW_CONTACT_ID, id);
-		builder.withValue(StructuredName.DISPLAY_NAME, displayName);
-		ops.add(builder.build());
-	}
-	
-	private void insertItemContacts(ArrayList<ContentProviderOperation> ops, String mimeType, String id, String[] contact, String[] item){
-		Builder builder = ContentProviderOperation.newInsert(Data.CONTENT_URI);
-		builder.withYieldAllowed(true);
-		builder.withValue(Data.RAW_CONTACT_ID, id);
-		builder.withValue(Data.MIMETYPE, mimeType);
-		for (int i=0; i<contact.length; i++){
-			builder.withValue(contact[i], item[i]);
-		}
-		ops.add(builder.build());
-	}
 
-	private int[] getColumnIndexs(String[] contacts, Cursor cur) {
-		int[] err = new int[contacts.length];
-		for (int i = 0; i < err.length; i++) {
-			err[i] = cur.getColumnIndex(contacts[i]);
+		public Contact(String name, String phone, String email) {
+			setId(mId + "");
+			setName(name);
+			setPhone(phone);
+			setEmail(email);
 		}
-		return err;
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getPhone() {
+			return phone;
+		}
+
+		public void setPhone(String phone) {
+			this.phone = phone;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(String email) {
+			this.email = email;
+		}
 	}
 }
