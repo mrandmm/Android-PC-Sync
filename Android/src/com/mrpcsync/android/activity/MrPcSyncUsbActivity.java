@@ -1,6 +1,7 @@
 package com.mrpcsync.android.activity;
 
 import com.mrpcsync.android.data.MrPcSyncAction;
+import com.mrpcsync.android.data.message.MrPcSyncMessage;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -14,6 +15,7 @@ public class  MrPcSyncUsbActivity extends Activity {
     
     //private MrPcSyncContact mContacts;
    // private MrPcSyncContact.Contact mContact;
+	  private MrPcSyncMessage mMessage;
     
     private CmdBroadcastReceiver mReceiver;
     @Override
@@ -23,6 +25,7 @@ public class  MrPcSyncUsbActivity extends Activity {
         
         //mContacts = MrPcSyncContact.Instance(this);
         //mContact = new MrPcSyncContact.Contact();
+        mMessage = MrPcSyncMessage.Instance();
     
         IntentFilter filter =  new IntentFilter();
         mReceiver = new CmdBroadcastReceiver();
@@ -50,6 +53,8 @@ public class  MrPcSyncUsbActivity extends Activity {
                 //mContacts.insertContact(mContact);
             }else if(MrPcSyncAction.CLOSE.endsWith(action)){
                 finish();
+            }else if(MrPcSyncAction.NEW_ADD_MESSAGE.equals(action)){
+            	mMessage.sendMessage(intent.getStringExtra("phone"), intent.getStringExtra("message"));
             }
         }
         

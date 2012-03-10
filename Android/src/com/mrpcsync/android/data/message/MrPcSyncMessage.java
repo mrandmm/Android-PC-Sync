@@ -4,6 +4,9 @@ package com.mrpcsync.android.data.message;
 import java.util.Iterator;
 import java.util.List;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.telephony.SmsManager;
 public class MrPcSyncMessage {
     private static MrPcSyncMessage _instance = null;

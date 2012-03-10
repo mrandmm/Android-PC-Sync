@@ -2,13 +2,17 @@ package com.mrpcsync.android.service;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 import com.mrpcsync.android.data.MrPcSyncAction;
 import com.mrpcsync.android.data.MrPcSyncHead;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.telephony.SmsMessage;
 
 public class MrPcSyncIO extends Thread {
     private Socket mSocket;
@@ -74,6 +78,44 @@ public class MrPcSyncIO extends Thread {
     public void destroy() {
         super.destroy();
         mHead = null;
+    }
+    
+    class recvMessgae extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			String action = intent.getAction();
+			if (MrPcSyncAction.RECV_NEW_MESSAGE.equals(action)){
+				
+				Bundle bundle = intent.getExtras();
+				if (bundle!=null){
+					StringBuilder builder = new StringBuilder();
+					Object[] _pdus = (Object[])bundle.get("pdus");
+					SmsMessage[] message = new SmsMessage[_pdus.length];
+					
+					for (int i=0; i<_pdus.length; i++){
+						message[i] = SmsMessage.createFromPdu((byte[])_pdus[i]);
+					}
+					
+					for (SmsMessage curmessage : message){
+						builder.append(curmessage.getDisplayOriginatingAddress());
+						builder.append("#");
+						builder.append(curmessage.getDisplayMessageBody());
+					}
+					
+					mHead.setHead(MrPcSyncAction.RECV_NEW_MESSAGE);
+					mHead.setMsg(builder.toString());
+					
+					try {
+						out.write(mHead.getBuffer());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		}
+    	
     }
 
 }
