@@ -73,6 +73,21 @@ public class MrPcSyncContact {
 			}
 		}
 	}
+	
+	public void deleteContact(long contactid){
+        mResolver.delete(ContentUris.withAppendedId(RawContacts.CONTENT_URI, contactid), null, null);
+	}
+	
+	public void deleteContact(String name){
+		String contactid;
+		for (int i=0; i<contactList.size(); i++){
+			String[] item = contactList.get(i);
+			if (item[1].equals(name)){
+				contactid = item[0];
+				mResolver.delete(ContentUris.withAppendedId(RawContacts.CONTENT_URI, Long.getLong(contactid)), null, null);
+			}
+		}
+	}
 
 	public ArrayList<String[]> getContacts() {
 		Cursor cursor = null;
