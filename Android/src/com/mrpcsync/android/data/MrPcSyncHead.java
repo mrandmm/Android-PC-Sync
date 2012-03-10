@@ -29,6 +29,10 @@ public class MrPcSyncHead {
         return buff;
     }
     
+    public String getMsgCmd(int i){
+    	return getMsgCmd()[i];
+    }
+    
     public String[] getMsgCmd(){
         return toString(mIn, headLength, cmdLength).split("#", 0);
     }
