@@ -16,7 +16,6 @@ public class AndroidDevice extends ObjectEvent<AndroidDevice>{
 	}
 
 	public void setDevices(IDevice[] device){
-		
         mDevices = device;
     }
     

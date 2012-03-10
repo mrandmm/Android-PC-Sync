@@ -2,15 +2,24 @@ package com.mrpcsync.pc.ui.control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JButton;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
 
+import com.android.ddmlib.IDevice;
+import com.mrpcsync.android.device.AndroidCmd;
 import com.mrpcsync.android.device.AndroidDevice;
 import com.mrpcsync.android.device.AndroidDeviceList;
-import com.mrpcsync.android.device.AndroidInstall;
+import com.mrpcsync.android.device.StringEvent;
 import com.mrpcsync.pc.data.MrPcSyncHead;
 import com.mrpcsync.pc.data.MrSyncClient;
 import com.mrpcsync.pc.data.control.Controller;
@@ -18,10 +27,11 @@ import com.mrpcsync.pc.event.EventDispatcher;
 import com.mrpcsync.pc.event.ObjectEvent;
 import com.mrpcsync.pc.event.OnRecvListener;
 import com.pcsync.pc.handle.MrPcSyncContact;
+import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 public class DataModeEventDispatcher extends EventDispatcher implements
         OnRecvListener {
-    private boolean mInit[] = {false, false, false, false};
+    private boolean mInit[] = {false, false, false, false, false};
     private static DataModeEventDispatcher _instance = null;
     private MrSyncClient mClient = MrSyncClient.getInstance();
     private Controller mController = Controller.getInstance();
@@ -29,6 +39,9 @@ public class DataModeEventDispatcher extends EventDispatcher implements
 
     private JTabbedPane mTabbedPane;
     private AndroidDeviceList mAndroidDeviceList = AndroidDeviceList.getInstance();
+    
+    
+    private AndroidCmd mCmd = AndroidCmd.getInstance();
 
     private class mTabbedPaneListener implements ChangeListener {
         @Override
@@ -46,6 +59,9 @@ public class DataModeEventDispatcher extends EventDispatcher implements
             case 3:
                 initApplicationPanel();
                 break;
+            case 4:
+            	initCmdPanel();
+            	break;
             }
         }
 
@@ -60,6 +76,7 @@ public class DataModeEventDispatcher extends EventDispatcher implements
     public DataModeEventDispatcher() {
         addEventListener(ObjectEvent.RECV_SOCKET, this);
         addEventListener(ObjectEvent.RECV_DEVICE, this);
+        addEventListener(ObjectEvent.RECV_STRING, this);
     }
 
     public static DataModeEventDispatcher getInstance() {
@@ -75,13 +92,23 @@ public class DataModeEventDispatcher extends EventDispatcher implements
             onRecv(((MrPcSyncHead) event));
         }else if(ObjectEvent.RECV_DEVICE.equals(event.getEvent())){
             onRecv(((AndroidDevice) event));
+        }else if(ObjectEvent.RECV_STRING.equals(event.getEvent())){
+        	onRecv(((StringEvent) event));
         }
     }
     
     public void onRecv(AndroidDevice device) {
+    	IDevice[] devices = device.getDevices();
+    	mCmd.setDevice(devices[0]);
     }
 
     public void onRecv(MrPcSyncHead head) {
+    }
+    
+    public void onRecv(StringEvent string) {
+    	String buff = panel.getText()+string.getBuffer()+"\n";
+    	((JTextPane)mController.getController("textPane")).setText(buff);
+    	panel.setCaretPosition(buff.length());
     }
 
     public void initWelcomePanel() {
@@ -89,12 +116,6 @@ public class DataModeEventDispatcher extends EventDispatcher implements
             return;
         }
         mAndroidDeviceList.start();
-        ((JButton)mController.getController("btn_refresh")).addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                mAndroidDeviceList.start();
-            }
-        });
         System.out.println("WelcomePanel");
         mInit[0] = true;
     }
@@ -121,6 +142,49 @@ public class DataModeEventDispatcher extends EventDispatcher implements
         }
         System.out.println("ApplicationPanel");
         mInit[3] = true;
+    }
+    
+    private JTextPane panel;
+    public void initCmdPanel(){
+    	if(mInit[4]){
+            return;
+        }
+    	panel = ((JTextPane)mController.getController("textPane"));
+    	panel.requestFocus();
+    	panel.addKeyListener(new cmdKeyListener());
+    	System.out.println("CmdPanel");
+        mInit[4] = true;
+    }
+
+    
+    
+    private int old = 0;
+    
+    public class cmdKeyListener implements KeyListener{
+
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+			if (arg0.getKeyCode()==KeyEvent.VK_ENTER){
+				try {
+					int length = panel.getCaretPosition();
+					if ((length-old)!=0){
+						mCmd.sendCmd(panel.getText(old, (length-old)));
+					}
+					old = length+1;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+		}
+
+		@Override
+		public void keyTyped(KeyEvent arg0) {
+		}
+    	
     }
 
 }
