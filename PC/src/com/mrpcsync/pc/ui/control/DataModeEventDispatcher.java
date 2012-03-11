@@ -41,7 +41,6 @@ public class DataModeEventDispatcher extends EventDispatcher implements
     private AndroidDeviceList mAndroidDeviceList = AndroidDeviceList.getInstance();
     
     
-    private AndroidCmd mCmd = AndroidCmd.getInstance();
 
     private class mTabbedPaneListener implements ChangeListener {
         @Override
@@ -99,23 +98,18 @@ public class DataModeEventDispatcher extends EventDispatcher implements
     
     public void onRecv(AndroidDevice device) {
     	IDevice[] devices = device.getDevices();
-    	mCmd.setDevice(devices[0]);
     }
 
     public void onRecv(MrPcSyncHead head) {
     }
     
     public void onRecv(StringEvent string) {
-    	String buff = panel.getText()+string.getBuffer()+"\n";
-    	((JTextPane)mController.getController("textPane")).setText(buff);
-    	panel.setCaretPosition(buff.length());
     }
 
     public void initWelcomePanel() {
         if(mInit[0]){
             return;
         }
-        mAndroidDeviceList.start();
         System.out.println("WelcomePanel");
         mInit[0] = true;
     }
@@ -144,47 +138,11 @@ public class DataModeEventDispatcher extends EventDispatcher implements
         mInit[3] = true;
     }
     
-    private JTextPane panel;
     public void initCmdPanel(){
     	if(mInit[4]){
             return;
         }
-    	panel = ((JTextPane)mController.getController("textPane"));
-    	panel.requestFocus();
-    	panel.addKeyListener(new cmdKeyListener());
     	System.out.println("CmdPanel");
         mInit[4] = true;
     }
-
-    
-    
-    private int old = 0;
-    
-    public class cmdKeyListener implements KeyListener{
-
-		@Override
-		public void keyPressed(KeyEvent arg0) {
-			if (arg0.getKeyCode()==KeyEvent.VK_ENTER){
-				try {
-					int length = panel.getCaretPosition();
-					if ((length-old)!=0){
-						mCmd.sendCmd(panel.getText(old, (length-old)));
-					}
-					old = length+1;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		@Override
-		public void keyReleased(KeyEvent arg0) {
-		}
-
-		@Override
-		public void keyTyped(KeyEvent arg0) {
-		}
-    	
-    }
-
 }

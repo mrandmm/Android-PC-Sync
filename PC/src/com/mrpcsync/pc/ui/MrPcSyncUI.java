@@ -81,64 +81,28 @@ public class MrPcSyncUI {
 		frame.getContentPane().add(tabbedPane);
 		controller.addController("tabbedPane", tabbedPane);
 
-		JPanel panel_welcome = new JPanel();
-		tabbedPane
-				.addTab("\u6B22\u8FCE",
-						new ImageIcon(
-								"C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_about.png"),
-						panel_welcome, null);
+		MrPcSyncWelcomePanel panel_welcome = new MrPcSyncWelcomePanel();
+		tabbedPane.addTab("\u6B22\u8FCE", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_about.png"), panel_welcome, null);
 		panel_welcome.setLayout(null);
-		controller.addController("panel_welcome", panel_welcome);
 
-		JPanel panel_contact = new JPanel();
-		tabbedPane
-				.addTab("\u901A\u8BAF\u5F55",
-						new ImageIcon(
-								"C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_account.png"),
-						panel_contact, null);
+		MrPcSyncContactPanel panel_contact = new MrPcSyncContactPanel();
+		tabbedPane.addTab("\u901A\u8BAF\u5F55", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_account.png"), panel_contact, null);
 		panel_contact.setLayout(null);
 		controller.addController("panel_contact", panel_contact);
 
-		JPanel panel_message = new JPanel();
-		tabbedPane
-				.addTab("\u77ED\u4FE1",
-						new ImageIcon(
-								"C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_feedback.png"),
-						panel_message, null);
+		MrPcSyncMessagePanel panel_message = new MrPcSyncMessagePanel();
+		tabbedPane.addTab("\u77ED\u4FE1", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_feedback.png"), panel_message, null);
 		panel_message.setLayout(null);
 		controller.addController("panel_message", panel_message);
 
-		JPanel panel_application = new JPanel();
-		tabbedPane.addTab("\u5E94\u7528", new ImageIcon(
-				"C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_task.png"),
-				panel_application, null);
+		MrPcSyncAppliactionPanel panel_application = new MrPcSyncAppliactionPanel();
+		tabbedPane.addTab("\u5E94\u7528", new ImageIcon("C:\\Users\\MM\\workspace\\MrPcSync\\res\\menu_icon_task.png"), panel_application, null);
 		panel_application.setLayout(null);
 		controller.addController("panel_application", panel_application);
 
-		JPanel panel_cmd = new JPanel();
-		panel_cmd.setBackground(Color.BLACK);
-		tabbedPane
-				.addTab("\u7EC8\u7AEF",
-						new ImageIcon(
-								"C:\\Users\\MM\\Desktop\\Android-PC-Sync\\PC\\res\\menu_icon_feedback.png"),
-						panel_cmd, null);
-		controller.addController("panel_cmd", panel_cmd);
+		MrPcSyncCmdPanel panel_cmd = new MrPcSyncCmdPanel();
+		tabbedPane.addTab("\u7EC8\u7AEF", new ImageIcon("C:\\Users\\MM\\Desktop\\Android-PC-Sync\\PC\\res\\menu_icon_feedback.png"), panel_cmd, null);
 		panel_cmd.setLayout(null);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane.setBounds(0, 0, 793, 493);
-		panel_cmd.add(scrollPane);
-		
-		JTextPane textPane = new JTextPane();
-		textPane.setBounds(1, 1, 775, 475);
-		textPane.setForeground(Color.GREEN);
-		textPane.setBackground(Color.BLACK);
-		textPane.setCaretColor(Color.WHITE);
-		scrollPane.add(textPane);
-		controller.addController("textPane", textPane);
-
 	}
 
 	private void initializeData() {
