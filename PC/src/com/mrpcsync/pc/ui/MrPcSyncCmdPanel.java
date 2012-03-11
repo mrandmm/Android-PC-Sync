@@ -18,14 +18,16 @@ public class MrPcSyncCmdPanel extends JPanel implements KeyListener, IShellOutpu
     private static MrPcSyncCmdPanel _instance = null;
     private JScrollPane mScrollPane = new JScrollPane();
     private JTextPane mTextPane = new JTextPane();
-	private IDevice mDevice;
+	private static IDevice mDevice;
 
 	public IDevice getDevice() {
 		return mDevice;
 	}
 
-	public void setDevice(IDevice mDevice) {
-		this.mDevice = mDevice;
+	public void setDevice(IDevice Device) {
+		if (Device!=null){
+			this.mDevice = Device;
+		}
 	}
     
     public MrPcSyncCmdPanel(){
@@ -58,7 +60,7 @@ public class MrPcSyncCmdPanel extends JPanel implements KeyListener, IShellOutpu
 			int length = mTextPane.getCaretPosition();
 			try {
 				String cmd = mTextPane.getText(old, length-old);
-				if (mDevice!=null && (length-old)>0){
+				if (mDevice!=null){
 					mDevice.executeShellCommand(cmd, this);
 				}
 			} catch (Exception e) {
@@ -81,9 +83,10 @@ public class MrPcSyncCmdPanel extends JPanel implements KeyListener, IShellOutpu
 		try {
 			mTextPane.setText("");
 			StringBuilder builder = new StringBuilder();
-			builder.append(mTextPane.getText());
 			builder.append(new String(arg0, "utf-8"));
 			mTextPane.setText(builder.toString());
+			mTextPane.requestFocus();
+			mTextPane.setCaretPosition(mTextPane.getCaretPosition());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

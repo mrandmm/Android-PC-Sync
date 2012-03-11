@@ -15,33 +15,26 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 
+import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
-import com.mrpcsync.android.device.AndroidCmd;
-import com.mrpcsync.android.device.AndroidDevice;
-import com.mrpcsync.android.device.AndroidDeviceList;
-import com.mrpcsync.android.device.StringEvent;
 import com.mrpcsync.pc.data.MrPcSyncHead;
 import com.mrpcsync.pc.data.MrSyncClient;
 import com.mrpcsync.pc.data.control.Controller;
 import com.mrpcsync.pc.event.EventDispatcher;
 import com.mrpcsync.pc.event.ObjectEvent;
 import com.mrpcsync.pc.event.OnRecvListener;
+import com.mrpcsync.pc.ui.MrPcSyncCmdPanel;
 import com.pcsync.pc.handle.MrPcSyncContact;
 import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
-public class DataModeEventDispatcher extends EventDispatcher implements
-        OnRecvListener {
+public class DataModeEventDispatcher extends Thread {
     private boolean mInit[] = {false, false, false, false, false};
     private static DataModeEventDispatcher _instance = null;
-    private MrSyncClient mClient = MrSyncClient.getInstance();
-    private Controller mController = Controller.getInstance();
-    private MrPcSyncContact mContact = MrPcSyncContact.getInstance();
-
-    private JTabbedPane mTabbedPane;
-    private AndroidDeviceList mAndroidDeviceList = AndroidDeviceList.getInstance();
+    private MrPcSyncCmdPanel mCmd = MrPcSyncCmdPanel.getInstance();
+    private IDevice mDevice;
+    private IDevice[] mDevices;
+    private AndroidDebugBridge mBridge = null;
     
-    
-
     private class mTabbedPaneListener implements ChangeListener {
         @Override
         public void stateChanged(ChangeEvent e) {
@@ -66,16 +59,20 @@ public class DataModeEventDispatcher extends EventDispatcher implements
 
     };
     
+    private JTabbedPane mTabbedPane;
     public void registerTabbedPane(){
-        mTabbedPane = (JTabbedPane) mController.getController("tabbedPane");
+        mTabbedPane = (JTabbedPane) Controller.getInstance().getController("tabbedPane");
         mTabbedPane.addChangeListener(new mTabbedPaneListener());
+        mTabbedPane.setEnabledAt(1, false);
+        mTabbedPane.setEnabledAt(2, false);
+        mTabbedPane.setEnabledAt(3, false);
+        mTabbedPane.setEnabledAt(4, false);
         this.initWelcomePanel();
     }
 
     public DataModeEventDispatcher() {
-        addEventListener(ObjectEvent.RECV_SOCKET, this);
-        addEventListener(ObjectEvent.RECV_DEVICE, this);
-        addEventListener(ObjectEvent.RECV_STRING, this);
+    	AndroidDebugBridge.init(false);
+        mBridge = AndroidDebugBridge.createBridge("adb", true);
     }
 
     public static DataModeEventDispatcher getInstance() {
@@ -85,31 +82,12 @@ public class DataModeEventDispatcher extends EventDispatcher implements
         return _instance;
     }
 
-    @Override
-    public void onRecv(ObjectEvent<?> event) {
-        if (ObjectEvent.RECV_SOCKET.equals(event.getEvent())){
-            onRecv(((MrPcSyncHead) event));
-        }else if(ObjectEvent.RECV_DEVICE.equals(event.getEvent())){
-            onRecv(((AndroidDevice) event));
-        }else if(ObjectEvent.RECV_STRING.equals(event.getEvent())){
-        	onRecv(((StringEvent) event));
-        }
-    }
-    
-    public void onRecv(AndroidDevice device) {
-    	IDevice[] devices = device.getDevices();
-    }
-
-    public void onRecv(MrPcSyncHead head) {
-    }
-    
-    public void onRecv(StringEvent string) {
-    }
-
     public void initWelcomePanel() {
         if(mInit[0]){
             return;
         }
+        //
+        start();
         System.out.println("WelcomePanel");
         mInit[0] = true;
     }
@@ -142,7 +120,37 @@ public class DataModeEventDispatcher extends EventDispatcher implements
     	if(mInit[4]){
             return;
         }
+    	mCmd.setDevice(mDevice);
     	System.out.println("CmdPanel");
         mInit[4] = true;
     }
+    
+    public void refersh(){
+    	start();
+    }
+
+	@Override
+	public void run() {
+        int count = 0;
+        while (!mBridge.hasInitialDeviceList()) {
+            try {
+                Thread.sleep(500);
+                count++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (count > 30) {
+                break;
+            }
+        }
+        mDevices = mBridge.getDevices();
+        if (mDevices.length>0){
+        	mDevice = mDevices[0];
+            mTabbedPane.setEnabledAt(1, true);
+            mTabbedPane.setEnabledAt(2, true);
+            mTabbedPane.setEnabledAt(3, true);
+            mTabbedPane.setEnabledAt(4, true);
+        }
+
+	}
 }
