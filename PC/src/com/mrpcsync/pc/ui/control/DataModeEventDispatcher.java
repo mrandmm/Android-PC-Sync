@@ -24,13 +24,14 @@ import com.mrpcsync.pc.event.EventDispatcher;
 import com.mrpcsync.pc.event.ObjectEvent;
 import com.mrpcsync.pc.event.OnRecvListener;
 import com.mrpcsync.pc.ui.MrPcSyncCmdPanel;
-import com.pcsync.pc.handle.MrPcSyncContact;
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
+import com.mrpcsync.pc.ui.MrPcSyncWelcomePanel;
 
 public class DataModeEventDispatcher extends Thread {
     private boolean mInit[] = {false, false, false, false, false};
     private static DataModeEventDispatcher _instance = null;
     private MrPcSyncCmdPanel mCmd = MrPcSyncCmdPanel.getInstance();
+    private MrPcSyncWelcomePanel mWel = MrPcSyncWelcomePanel.getInstance();
+    private MrSyncClient mClient = MrSyncClient.getInstance();
     private IDevice mDevice;
     private IDevice[] mDevices;
     private AndroidDebugBridge mBridge = null;
@@ -146,10 +147,16 @@ public class DataModeEventDispatcher extends Thread {
         mDevices = mBridge.getDevices();
         if (mDevices.length>0){
         	mDevice = mDevices[0];
+        	mWel.setDevice(mDevice);
             mTabbedPane.setEnabledAt(1, true);
             mTabbedPane.setEnabledAt(2, true);
             mTabbedPane.setEnabledAt(3, true);
             mTabbedPane.setEnabledAt(4, true);
+            try {
+				mClient.connect();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
         }
 
 	}

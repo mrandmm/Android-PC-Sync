@@ -3,10 +3,13 @@ package com.mrpcsync.pc.ui;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.UnsupportedEncodingException;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
@@ -16,8 +19,8 @@ import com.android.ddmlib.IShellOutputReceiver;
 
 public class MrPcSyncCmdPanel extends JPanel implements KeyListener, IShellOutputReceiver{
     private static MrPcSyncCmdPanel _instance = null;
-    private JScrollPane mScrollPane = new JScrollPane();
     private JTextPane mTextPane = new JTextPane();
+    private JTextField mTextField = new JTextField();
 	private static IDevice mDevice;
 
 	public IDevice getDevice() {
@@ -31,18 +34,17 @@ public class MrPcSyncCmdPanel extends JPanel implements KeyListener, IShellOutpu
 	}
     
     public MrPcSyncCmdPanel(){
-    	mScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-    	mScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    	mScrollPane.setBounds(0, 0, 793, 493);
-		this.add(mScrollPane);
-		
-		mTextPane.setBounds(1, 1, 775, 475);
+		mTextPane.setBounds(0, 0, 793, 470);
 		mTextPane.setForeground(Color.GREEN);
 		mTextPane.setBackground(Color.BLACK);
 		mTextPane.setCaretColor(Color.WHITE);
-		mTextPane.addKeyListener(this);
-		mTextPane.requestFocus();
-		mScrollPane.add(mTextPane);
+		mTextPane.setEditable(false);
+		this.add(mTextPane);
+		
+		mTextField = new JTextField();
+		mTextField.setBounds(0, 471, 793, 21);
+		mTextField.addKeyListener(this);
+		this.add(mTextField);
     }
 
     public static MrPcSyncCmdPanel getInstance() {
@@ -52,21 +54,18 @@ public class MrPcSyncCmdPanel extends JPanel implements KeyListener, IShellOutpu
         return _instance;
     }
     
-    int old = 0;
-
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		if (arg0.getKeyCode()==KeyEvent.VK_ENTER){
-			int length = mTextPane.getCaretPosition();
 			try {
-				String cmd = mTextPane.getText(old, length-old);
+				String cmd = mTextField.getText();
 				if (mDevice!=null){
 					mDevice.executeShellCommand(cmd, this);
 				}
+				mTextField.setText("");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			old = length+1;
 		}
 	}
 

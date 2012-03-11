@@ -39,6 +39,7 @@ public class MrPcSyncUI {
 
 	private JFrame frame;
 	private DataModeEventDispatcher datamode = DataModeEventDispatcher.getInstance();
+	private JTextField textField;
 
 	/**
 	 * Launch the application.
@@ -98,6 +99,7 @@ public class MrPcSyncUI {
 		MrPcSyncCmdPanel panel_cmd = new MrPcSyncCmdPanel();
 		tabbedPane.addTab("\u7EC8\u7AEF", new ImageIcon("C:\\Users\\MM\\Desktop\\Android-PC-Sync\\PC\\res\\menu_icon_feedback.png"), panel_cmd, null);
 		panel_cmd.setLayout(null);
+		
 	}
 
 	private void initializeData() {
